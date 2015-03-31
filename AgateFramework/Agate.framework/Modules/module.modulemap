@@ -1,0 +1,6 @@
+framework module Agate {
+  umbrella header "Agate.h"
+
+  export *
+  module * { export * }
+}
