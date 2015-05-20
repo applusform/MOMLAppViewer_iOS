@@ -191,55 +191,57 @@
     NSString *openType = OpenType_UNKNOWN;
     
     if ([fullUrl hasPrefix:@"http"]) {
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:finalUrl] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:5];
-        NSHTTPURLResponse *response = nil;
-        NSError *error = nil;
-        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-        if (data) {
-            NSString *text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            if (text == nil)
-                text = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-            openType = [self estimateOpenType:text];
-        }
-        if (response.statusCode !=200)
-            openType = OpenType_ERROR;
-            
-        if ([openType isEqualToString:OpenType_ERROR] || [openType isEqualToString:OpenType_UNKNOWN]){
-            NSString *retryUrl;
+        
+        if (![fullUrl hasSuffix:@".xml"]) {
+            NSString *applicationUrl;
             if ([finalUrl hasSuffix:@"/"])
-                retryUrl = [finalUrl stringByAppendingString:@"applicationInfo.xml"];
+                applicationUrl = [fullUrl stringByAppendingString:@"applicationInfo.xml"];
             else
-                retryUrl = [finalUrl stringByAppendingString:@"/applicationInfo.xml"];
+                applicationUrl = [fullUrl stringByAppendingString:@"/applicationInfo.xml"];
             
-            request = [NSURLRequest requestWithURL:[NSURL URLWithString:retryUrl] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:5];
-            error = nil;
-            response = nil;
-            data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-            
-            NSString *retryOpenType = OpenType_UNKNOWN;
+            NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:applicationUrl] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:5];
+            NSHTTPURLResponse *response = nil;
+            NSError *error = nil;
+            NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
             if (data) {
                 NSString *text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                 if (text == nil)
                     text = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-                retryOpenType = [self estimateOpenType:text];
-                if ([retryOpenType isEqualToString:OpenType_APPLICATION]) {
-                    openType = retryOpenType;
+                openType = [self estimateOpenType:text];
+                
+                if ([openType isEqualToString:OpenType_APPLICATION])
                     finalUrl = [response.URL absoluteString];
-                }
             }
-        } else {
-            finalUrl = [response.URL absoluteString];
         }
         
-        if ([openType isEqualToString:OpenType_ERROR]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Can't find resource" message:[NSString stringWithFormat:@"HTTP error : %ld\r\n%@", (long)response.statusCode, fullUrl] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-            return;
-        }
-        if ([openType isEqualToString:OpenType_UNKNOWN]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unknown resource type" message:@"can't detect file type" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-            return;
+        if (![openType isEqualToString:OpenType_APPLICATION]) {
+            NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:finalUrl] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:5];
+            NSHTTPURLResponse *response = nil;
+            NSError *error = nil;
+            NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+            if (data) {
+                NSString *text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                if (text == nil)
+                    text = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+                openType = [self estimateOpenType:text];
+            }
+            if (response.statusCode !=200)
+                openType = OpenType_ERROR;
+            
+            if (![openType isEqualToString:OpenType_ERROR] && ![openType isEqualToString:OpenType_UNKNOWN]){
+                finalUrl = [response.URL absoluteString];
+            }
+            
+            if ([openType isEqualToString:OpenType_ERROR]) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Can't find resource" message:[NSString stringWithFormat:@"HTTP error : %ld\r\n%@", (long)response.statusCode, fullUrl] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+                return;
+            }
+            if ([openType isEqualToString:OpenType_UNKNOWN]) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unknown resource type" message:@"can't detect file type" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+                return;
+            }
         }
         
     }
