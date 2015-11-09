@@ -17,7 +17,7 @@
 @protocol IMOMLComponent <NSObject>
 @required
 - (NSString*)callFunction:(NSString *)name args:(NSArray *)args;
-- (void)initBase:(id<IMOMLComponent>)base userObject:(NSObject *)userObj object:(MOMLObject *)object;
+- (void)onInitBase:(id<IMOMLComponent>)base userObject:(NSObject *)userObj object:(MOMLObject *)object;
 - (MOMLObjectApiInfo *)getObjectApiInfo;
 - (id<IMOMLComponent>)getBase;
 

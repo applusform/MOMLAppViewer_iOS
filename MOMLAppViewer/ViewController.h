@@ -18,10 +18,7 @@
 }
 @property (weak, nonatomic) IBOutlet UITextField *urlTextField;
 @property (weak, nonatomic) IBOutlet UITableView *urlsTableView;
-@property (weak, nonatomic) IBOutlet UISwitch *closeAppSwitch;
 - (IBAction)onOpenClick:(id)sender;
-- (IBAction)onCloseAppSwitchChanged:(id)sender;
 - (void)openUrl:(NSString *)url;
 - (void)uriSchemeConfirmUrl:(NSString *)url;
-- (void)hideAppViewController;
 @end

@@ -27,12 +27,16 @@
 // return / appended url if it is able to connect.
 - (NSString *)absUrlFromUrl:(NSString *)url
 {
+    
+    if ([url hasSuffix:@"/"])
+        return url;
+    
+    if ([url containsString:@"?"])
+        return url;
+
     NSString *lowerCaseUrl = [url lowercaseString];
     
     if ([lowerCaseUrl hasSuffix:@".xml"] || [lowerCaseUrl hasSuffix:@".html"] || [lowerCaseUrl hasSuffix:@".htm"])
-        return url;
-    
-    if ([url hasSuffix:@"/"])
         return url;
     
     NSString *fullUrl = [url stringByAppendingString:@"/"];
@@ -88,7 +92,7 @@
 - (void)hideModalViewAnimated:(BOOL)ani
 {
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self dismissModalViewControllerAnimated:ani];
+    [self dismissViewControllerAnimated:ani completion:nil];
     [[self getMomlView] removeFromSuperview];
     
 }

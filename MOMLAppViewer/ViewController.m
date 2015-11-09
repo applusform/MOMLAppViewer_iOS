@@ -46,7 +46,7 @@
         if (outputDate == nil)
             outputDate = @"";
         
-        [_bottomLabel setText:[NSString stringWithFormat:@"based on Citrine Developer build 1.1.6_%@ by mospi.org", outputDate]];
+        [_bottomLabel setText:[NSString stringWithFormat:@"based on Citrine Developer build 1.1.8_%@ by mospi.org", outputDate]];
     }
 
     // title
@@ -63,10 +63,6 @@
                                           initWithTarget:self action:@selector(handleLongPress:)];
     lpgr.minimumPressDuration = 1.0; //seconds
     lpgr.delegate = self;
-    
-    BOOL closeApp = [[NSUserDefaults standardUserDefaults] integerForKey:@"closeApp"];
-
-    [_closeAppSwitch setOn:closeApp];
     
     [_urlsTableView addGestureRecognizer:lpgr];
 }
@@ -152,7 +148,7 @@
 
 - (NSString *)fullUrl:(NSString *)url
 {
-    if (!([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] || [url hasPrefix:@"embed://"] || [url hasPrefix:@"storage://"])) {
+    if (!([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"] || [url hasPrefix:@"embed:/"] || [url hasPrefix:@"storage:/"])) {
         url = [NSString stringWithFormat:@"http://%@", url];
     }
     
@@ -190,7 +186,7 @@
     NSString *finalUrl = fullUrl;
     NSString *openType = OpenType_UNKNOWN;
     
-    if ([fullUrl hasPrefix:@"http"]) {
+    if ([fullUrl hasPrefix:@"http://"] || [fullUrl hasPrefix:@"https://"]) {
         
         if (![fullUrl hasSuffix:@".xml"]) {
             NSString *applicationUrl;
@@ -237,14 +233,41 @@
                 [alert show];
                 return;
             }
-            if ([openType isEqualToString:OpenType_UNKNOWN]) {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unknown resource type" message:@"can't detect file type" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                [alert show];
-                return;
-            }
+        }
+    } else if ([fullUrl hasPrefix:@"embed:/"]) {
+        NSString *bundlePath = [fullUrl substringFromIndex:7];
+        NSString *filePath = [[NSBundle mainBundle] pathForResource:bundlePath ofType:nil];
+        
+        if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Can't find resource" message:@"File not found." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+            return;
         }
         
+        NSString *text = [[NSString alloc] initWithContentsOfFile:filePath usedEncoding:nil error:nil];
+        openType = [self estimateOpenType:text];
+    } else if ([fullUrl hasPrefix:@"storage:/"]) {
+        NSString *storagePath = [fullUrl substringFromIndex:9];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentDir = [paths objectAtIndex:0];
+        NSString *filePath = [documentDir stringByAppendingPathComponent:storagePath];
+        
+        if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Can't find resource" message:@"File not found." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+            return;
+        }
+
+        NSString *text = [[NSString alloc] initWithContentsOfFile:filePath usedEncoding:nil error:nil];
+        openType = [self estimateOpenType:text];
     }
+    
+    if ([openType isEqualToString:OpenType_UNKNOWN]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unknown resource type" message:@"can't detect file type" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
     [self addUrl:url];
     [_urlsTableView reloadData];
     
@@ -274,13 +297,7 @@
     if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
         [modalParent presentViewController:viewerController animated:NO completion:nil];
     else
-        [modalParent presentModalViewController:viewerController animated:NO];
-}
-
-- (void)hideAppViewController
-{
-    //[_appViewController hideModalViewAnimated:NO];
-    
+        [modalParent presentViewController:viewerController animated:NO completion:nil];
 }
 
 - (void)uriSchemeConfirmUrl:(NSString *)url
@@ -296,15 +313,8 @@
     }
 }
 
-- (IBAction)onCloseAppSwitchChanged:(id)sender {
-    UISwitch *uiSwitch = (UISwitch *)sender;
-    
-    [[NSUserDefaults standardUserDefaults] setInteger:[uiSwitch isOn] forKey:@"closeApp"];
-}
-
 - (void)viewDidUnload {
     [self setUrlsTableView:nil];
-    [self setCloseAppSwitch:nil];
     [super viewDidUnload];
 }
 
@@ -386,8 +396,6 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
-// A delegate method called by the URL text field when the user taps the Return
-// key.  We just dismiss the keyboard.
 {
     [textField resignFirstResponder];
     return NO;
@@ -404,7 +412,7 @@
     return NO;
 }
 
--(NSUInteger)supportedInterfaceOrientations
+-(UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskPortrait;
 }

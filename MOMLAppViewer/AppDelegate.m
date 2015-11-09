@@ -106,13 +106,6 @@ static void replaceMethod(Class c, SEL old, SEL new)
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    NSDictionary *appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSNumber numberWithBool:NO], @"closeApp",
-                                 nil];
-    
-    [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
-    
-    
     self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
     
     self.window.rootViewController = self.viewController;
@@ -126,7 +119,7 @@ static void replaceMethod(Class c, SEL old, SEL new)
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidChangeStatusBarOrientationNotification object:nil queue:nil usingBlock:^(NSNotification *n) {
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                 self.window.rootViewController.view.frame = UIScreen.mainScreen.applicationFrame;
-                self.window.rootViewController.modalViewController.view.frame = UIScreen.mainScreen.applicationFrame;
+                self.window.rootViewController.presentedViewController.view.frame = UIScreen.mainScreen.applicationFrame;
             }];
         }];
         
@@ -141,7 +134,7 @@ static void replaceMethod(Class c, SEL old, SEL new)
     return YES;
 }
 
-- (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
+- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
 {
     return UIInterfaceOrientationMaskAll;
 }
@@ -157,14 +150,12 @@ static void replaceMethod(Class c, SEL old, SEL new)
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    [_viewController hideAppViewController];
-    
     if (_isBackground) {
         while ([_viewController presentedViewController]) {
             UIViewController *lastPresentedViewController = [_viewController presentedViewController];
             while ([lastPresentedViewController presentedViewController])
                 lastPresentedViewController = [lastPresentedViewController presentedViewController];
-            [lastPresentedViewController dismissModalViewControllerAnimated:NO];
+            [lastPresentedViewController dismissViewControllerAnimated:NO completion:nil];
         }
     }
     
@@ -186,14 +177,6 @@ static void replaceMethod(Class c, SEL old, SEL new)
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     
     _isBackground = YES;
-    
-    BOOL closeApp = [[NSUserDefaults standardUserDefaults] integerForKey:@"closeApp"];
-    
-    if (closeApp) {
-        [_viewController hideAppViewController];
-    }
-    
-    
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application

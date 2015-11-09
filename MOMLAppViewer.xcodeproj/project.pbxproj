@@ -46,6 +46,7 @@
 		08FEAAC4171555DE0046929C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FEAAC3171555DE0046929C /* AudioToolbox.framework */; };
 		300BEFD81ACA69C500115BE6 /* Agate.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 300BEFD61ACA69C500115BE6 /* Agate.bundle */; };
 		300BEFD91ACA69C500115BE6 /* Agate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 300BEFD71ACA69C500115BE6 /* Agate.framework */; };
+		30B8CFC11BF064C30015D180 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30B8CFC01BF064C30015D180 /* LaunchScreen.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -94,6 +95,7 @@
 		08FEAAC3171555DE0046929C /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		300BEFD61ACA69C500115BE6 /* Agate.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Agate.bundle; path = AgateFramework/Agate.bundle; sourceTree = "<group>"; };
 		300BEFD71ACA69C500115BE6 /* Agate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Agate.framework; path = AgateFramework/Agate.framework; sourceTree = "<group>"; };
+		30B8CFC01BF064C30015D180 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +195,7 @@
 				08EE207116D634BA00D98F7B /* ViewController.h */,
 				08EE207216D634BA00D98F7B /* ViewController.m */,
 				08EE207F16D6364800D98F7B /* ViewController.xib */,
+				30B8CFC01BF064C30015D180 /* LaunchScreen.xib */,
 				0894C1441959506300BB554F /* guide.png */,
 				08EE206016D634BA00D98F7B /* Supporting Files */,
 			);
@@ -285,6 +288,7 @@
 				08EE208116D6364800D98F7B /* ViewController.xib in Resources */,
 				08F7241E195D045E00367B25 /* citrineIcon120.png in Resources */,
 				0894C1451959506300BB554F /* guide.png in Resources */,
+				30B8CFC11BF064C30015D180 /* LaunchScreen.xib in Resources */,
 				08F7241F195D045E00367B25 /* citrineIcon152.png in Resources */,
 				08C7B71B16DC9F2D00AC08AA /* citrineIcon57.png in Resources */,
 				300BEFD81ACA69C500115BE6 /* Agate.bundle in Resources */,
@@ -399,15 +403,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MOMLAppViewer/MOMLAppViewer-Prefix.pch";
 				INFOPLIST_FILE = "MOMLAppViewer/MOMLAppViewer-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
-				LIBRARY_SEARCH_PATHS = ../../iOS/libs;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-lstdc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = ../../iOS/libs;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -425,15 +427,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MOMLAppViewer/MOMLAppViewer-Prefix.pch";
 				INFOPLIST_FILE = "MOMLAppViewer/MOMLAppViewer-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
-				LIBRARY_SEARCH_PATHS = ../../iOS/libs;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = (
 					"-all_load",
 					"-lstdc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = ../../iOS/libs;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
