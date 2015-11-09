@@ -1,9 +1,9 @@
 # MOMLAppViewer_iOS
 MOML Application Viewer for iOS 
 
-The MOML Application Viewer is a testing utility for developer using Citrine Framework.
-You don't need to waste time building project to test MOML(Mobile Object Markup Language) file.
-You can test  MOML files remotely.
+The MOML Application Viewer is a testing utility for developer using Citrine Framework.  
+You don't need to waste time building project to test MOML(Mobile Object Markup Language) file.  
+You can test  MOML files remotely.  
 
 If you are not familiar or never heard about MOML, you can still look around by using default sample URLs.
 
@@ -15,8 +15,8 @@ If you are not familiar or never heard about MOML, you can still look around by 
 ### "momlappviewer:" URI scheme
 You can call MOML page on any other app or web browser.
 
-ex)
-momlappviewer:http://mospi.org/momlApps/MOMLAPI
+ex)  
+``momlappviewer:http://mospi.org/momlApps/MOMLAPI``
 
 
 ### links
